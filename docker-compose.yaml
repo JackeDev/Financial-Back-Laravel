@@ -1,11 +1,11 @@
 services:
-  web:
+  web-dev:
     image: nginx:latest # Using the default Nginx image with custom configuration.
     volumes:
       # Mount the application code for live updates
       - ./:/var/www
       # Mount the Nginx configuration file
-      - ./docker/development/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       # Map port 80 inside the container to the port specified by 'NGINX_PORT' on the host machine
       - "80:80"
@@ -21,8 +21,8 @@ services:
     # For the php-fpm service, we will create a custom image to install the necessary PHP extensions and setup proper permissions.
     build:
       context: .
-      dockerfile: ./docker/common/php-fpm/Dockerfile
-      target: development
+      dockerfile: ./docker/Dockerfile
+      #target: development
       args:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
@@ -42,7 +42,7 @@ services:
     networks:
       - laravel-development
     depends_on:
-      mysql:
+      mysqlfinancial-dev:
         condition: service_started  # Wait for postgres to start
 
 #  workspace:
@@ -80,9 +80,9 @@ services:
 #      - postgres-data-development:/var/lib/postgresql/data
 #    networks:
 #      - laravel-development
-  mysql:
+  mysqlfinancial-dev:
     image: mysql:5.7.44
-    container_name: mysqldatabase
+    container_name: mysqlfinancial
     ports:
       - 3308:3306
     environment:
